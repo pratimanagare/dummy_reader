@@ -1,0 +1,39 @@
+python func.py \
+-f '{"app_home":"/dsdev_hdd/pratima/Others/tester/trial_output","func_name":"dummy_reader","uid":"1","pid":"3423","uuid":"123","task":"run"}' \
+-c '{"sleep_time":1,"loop":5}' \
+-i '["/dsdev_hdd/pratima/Others/tester/sample_data.csv"]' \
+-o '/dsdev_hdd/pratima/Others/tester/trial_output/' \
+-r '{}' \
+-u '{}'
+
+
+docker run --rm --mount type=bind,source=/dsdev_hdd/pratima/Others/tester,target=/ml4allhome \
+-e 'FUNCOPT={"app_home":"/ml4allhome","func_name":"dummy_reader","uid":"1","pid":"3423","uuid":"123","task":"run"}' \
+-e 'CONFIG={"sleep_time":1,"loop":5}' \
+-e 'INPUT_PATHS=["/ml4allhome/sample_data.csv"]' \
+-e 'OUTPUT_PATH=/ml4allhome/trial_output/' \
+-e 'RUNTIME_CONFIG={}' \
+-e 'USER_CONFIG={}' \
+pratimanagare/ml4all:dummy_reader-1.0.0
+
+
+curl -X POST -H 'Content-Type: application/json' http://127.0.0.1:5000/run -d '{"f":{"app_home":"/dsdev_hdd/pratima/Others/tester/trial_output","func_name":"dummy_reader","uid":"1","pid":"3423","uuid":"123","task":"run"},"c":{"sleep_time":1,"loop":5},"r":{},"i":["/dsdev_hdd/pratima/Others/tester/sample_data.csv"],"o":"/dsdev_hdd/pratima/Others/tester/trial_output/","u":{}}'
+
+
+*****docker as flask****
+docker run --mount type=bind,source=/dsdev_hdd/pratima/Others/tester,target=/ml4allhome -p 5000:5000 pratimanagare/ml4all:dummy_reader-1.0.0
+
+curl -X POST -H 'Content-Type: application/json' http://127.0.0.1:5
+000/run -d '{"f":{"app_home":"/ml4allhome/trial_output","func_name":"dummy_reader","uid":"1","pid":"3423","uuid":"123","task":"
+run"},"c":{"sleep_time":1,"loop":5},"r":{},"i":["/ml4allhome/sample_data.csv"],"o":"/ml4allhome/trial_output/","u":{}}'
+
+
+*****docker as flask and direct run****
+docker run --mount type=bind,source=/dsdev_hdd/pratima/Others/tester,target=/ml4allhome pratimanagare/ml4all:dummy_reader-1.0.0 func.py \
+-f '{"app_home":"/ml4allhome","func_name":"dummy_reader","uid":"1","pid":"3423","uuid":"123","task":"run"}' -c '{"sleep_time":1,"loop":5}' \
+-i '["/ml4allhome/sample_data.csv"]' \
+-o '/ml4allhome/trial_output/' \
+-r '{}' \
+-u '{}'
+
+docker run -p=5000:5000 --mount type=bind,source=/dsdev_hdd/pratima/Others/tester,target=/ml4allhome pratimanagare/ml4all:dummy_reader-1.0.0 func_api.py

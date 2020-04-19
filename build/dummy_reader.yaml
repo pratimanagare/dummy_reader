@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  # Unique key of the Job instance
+  name: dummy-reader
+spec:
+  template:
+    metadata:
+      name: dummy-reader
+    spec:
+      volumes:
+      - name: dask-volume-new
+        persistentVolumeClaim:
+          claimName: dask-volume-claim-new
+      containers:
+      - name: dummy-reader
+        image: pratimanagare/ml4all:dummy_reader-1.0.0
+        env:
+        - name: FUNCOPT
+          value: '{"app_home":"/ml4allhome",
+          "func_name":"dummy_reader","uid":"1","pid":"3423","uuid":"123","task":"run"}'
+        - name: INPUT_PATHS
+          value: '["/ml4allhome/sample_data.csv"]'
+        - name: CONFIG
+          value: '{"sleep_time":1}'
+        - name: OUTPUT_PATH
+          value: '/ml4allhome/output/'
+        - name: RUNTIME_CONFIG
+          value: '{}'
+        - name: USER_CONFIG
+          value: '{}'
+        volumeMounts:
+        - mountPath: "/ml4allhome"
+          name: dask-volume-new
+      # Do not restart containers after they exit
+      restartPolicy: Never
